@@ -1,0 +1,163 @@
+- Start Lab
+- Open Console
+- Activate cloud shell
+
+gcloud auth list
+gcloud config list project
+
+- Click on Navigation Menu > Cloud Storage > Bucket > Create New Bucket 
+- Copy and paste the bucket name from previous page to name field
+- Click on create
+- Click on Bucket on LHS panel to see the output
+
+- In the top search bar search for big query and click on it.
+- click on the 3 dots near the project name in LHS panel > create dataset
+- copy the Big query data set name from previous page and  paste it in data set id field
+- change the data location to us (multiple regions)
+- click on create dataset
+- click on small arrow near project to see the data set created
+
+Now its time for commands
+- copy and paste the below commands in the terminal
+---------------------------------------------------
+gsutil cp gs://cloud-training/gsp323/lab.csv .
+
+cat lab.csv
+
+gsutil cp gs://cloud-training/gsp323/lab.schema .
+
+cat lab.schema
+-------------------------------------------------------
+- wait for it to run
+
+- copy the big query schema and paste it somewhere (it will be usefull in the future)
+should copy only things after the "BigQuery Schema" :
+
+- click on the 3 dots near the data set created(lab_...) and click open
+- click create table
+- change create table form to Google Cloud Storage
+- copy the bucket csv file path from previous page (task 1) and paste it in "select file from GCS bucket" field
+- copy the table name from the BigQuery output table row in the table mentioned in task 1 , copy the last part( should be customers_xxx something like this) and paste in Table field
+
+- click on edit as text
+- copy and paste the Bigquery schema from before and paste it below that
+- click create table
+- can click on go to table
+
+
+
+- in the top search bar search for dataflow > click on data flow
+- After it opens, click on Create Job From Template
+- Give job name as sample
+- regional end point as whatever mentioned in your task (ex: us-east1)
+- For data overflow template : find Process Data in Bulk(batch) > in this select Text Files on Cloud Storage to BigQuery
+- wait a second
+- Copy the respective fields from the table and paste it in the respective fields
+- click on run job
+- Wait for some time
+- The graph kind of output will appear
+||||| CHECK YOUR PROGRESS LATER ||||| IT WILL COME ||||
+
+- In the top search bar search for Dataproc > click on Data proc
+- click on create cluster
+- change the region to whatever mentioned in the previous page
+- Go to configure nodes on the LHS Panel and change the series type of both Manager and worker nodes From N2 to N1
+- Click on create
+- wait until its provisioning
+- after it says runnig click on it
+- click on VM Instances 
+- After it loads click on SSH in the right side (this will open a terminal in a seperate window)
+- Copy and paste the command mentioned in task 2 in the new SSH terminal
+
+- Now click on Jobs in the LHS panel
+- After it loads click on submit job
+- change the fields to whatever mentioned in the task 2
+-  click on submit
+- open the ssh and type exit ( will close the SSH )
+- Navigation Menu > Cloud Overview
+- Copy the URL from the top of the browser and paste it in new tab ( we need this for task 4)
+- in our current tab search for dataprep (press accept , allow, etc)
+
+- Now the data prep by trifecta will open
+- Click on import data on the top right
+- click on Cloud storage from LHS panel
+- Copy the csv file path from task 3
+- click on the edit path and paste it > click on go
+-  after preview comes click on continue
+- click on the laterst runs.csv(file name may change)  from the list
+- click on use in new flow
+- Remove all the rwos with failure as the state(column 10)
+- REmove all teh rows with 0 as score:
+  click the arrow from column 9 > filter rows > on column values > contains 
+  paste the regular expression from task 3 on the pattern to match field.
+  - click on delete matching rows > click add
+ - rename all the column names to whatever mentioned
+ - After renaming is done click run
+ - click on run again
+ 
+ 
+ TASK 4: 
+ in the new console (Which we opened before in the new tab)
+ - activate cloud shell
+ - paste the commands one by one
+ 
+ Task 4 :::=>
+
+gcloud iam service-accounts create my-natlang-sa \
+  --display-name "my natural language service account"
+  
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+gcloud iam service-accounts keys create ~/key.json \
+  --iam-account my-natlang-sa@$DEVSHELL_PROJECT_ID.iam.gserviceaccount.com
+  
+  
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ wget https://raw.githubusercontent.com/guys-in-the-cloud/cloud-skill-boosts/main/Challenge-labs/Perform%20Foundational%20Data%2C%20ML%2C%20and%20AI%20Tasks%20in%20Google%20Cloud%3A%20Challenge%20Lab/speech-request.json
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+curl -s -X POST -H "Content-Type: application/json" --data-binary @speech-request.json \ 
+"https://speech.googleapis.com/v1/speech:recognize?key=${API_KEY}" > speech.json
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+gsutil cp speech.json gs://$DEVSHELL_PROJECT_ID-marking/<changefilename> (file name mentioned in first point (last part))
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+gcloud ml language analyze-entities --content="Old Norse texts portray Odin as one-eyed and long-bearded, frequently wielding a spear named Gungnir and wearing a cloak and a broad hat." > language.json
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+gsutil cp language.json gs://$DEVSHELL_PROJECT_ID-marking/<changefilename>  (file name mentioned in second point (last part))
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+wget https://github.com/guys-in-the-cloud/cloud-skill-boosts/blob/main/Challenge-labs/Perform%20Foundational%20Data%2C%20ML%2C%20and%20AI%20Tasks%20in%20Google%20Cloud:%20Challenge%20Lab/video-intelligence-request.json
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+curl -s -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer '$(gcloud auth print-access-token)'' \
+    'https://videointelligence.googleapis.com/v1/videos:annotate' \
+    -d @video-intelligence-request.json  > video.json
+    
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    
+ gsutil cp video.json gs://$DEVSHELL_PROJECT_ID-marking/<changefilename>  (file name mentioned in third point (last part))
+ 
+ 
+ Check progress of all 
+ AND YOU ARE DONE:)
+
+
+ 
+
+
+
+
+
+
+
